@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Botany Comparative Slide & PDF Studio (V9 LaTeX Fraction & Radical Engine)</title>
+  
+  <!-- iOS / iPhone Standalone App & Web App Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Comp Studio">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#090d16">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Gujarati:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans Gujarati', 'Inter', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: #090d16;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Streamlined Zero-Scroll Toolbar */
+    .top-toolbar {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 5px 12px;
+      padding-top: max(5px, env(safe-area-inset-top));
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      z-index: 20;
+    }
+
+    .btn, .btn-sym, .slide-pill, .color-chip, .btn-toggle {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar-row {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 3px;
+      }
+      .toolbar-row::-webkit-scrollbar {
+        height: 3px;
+      }
+      .toolbar-row::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 3px;
+      }
+      .stage-container {
+        padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
+        padding-left: max(6px, env(safe-area-inset-left)) !important;
+        padding-right: max(6px, env(safe-area-inset-right)) !important;
+      }
+    }
+
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .toolbar-section {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #1e293b;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+
+    .toolbar-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+    }
+
+    .btn {
+      padding: 4px 8px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      background: #334155;
+      color: #f1f5f9;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: #475569; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-success { background: #059669; color: #fff; }
+    .btn-success:hover { background: #047857; }
+    .btn-pdf { background: #dc2626; color: #fff; }
+    .btn-pdf:hover { background: #b91c1c; }
+    .btn-danger { background: #7f1d1d; color: #fecaca; }
+    .btn-danger:hover { background: #991b1b; }
+    .btn-purple { background: #7c3aed; color: #fff; }
+    .btn-purple:hover { background: #6d28d9; }
+    .btn-orange { background: #ea580c; color: #fff; }
+    .btn-orange:hover { background: #c2410c; }
+    .btn-gold { background: #ca8a04; color: #fff; }
+    .btn-gold:hover { background: #a16207; }
+
+    /* Science & Math Symbol Buttons */
+    .btn-sym {
+      padding: 2px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #f8fafc;
+      border-radius: 4px;
+      cursor: pointer;
+      line-height: 1.2;
+      transition: all 0.15s ease;
+    }
+    .btn-sym:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      border-color: #38bdf8;
+    }
+    .btn-sym-yellow {
+      background: #fef08a;
+      color: #713f12;
+      border-color: #eab308;
+    }
+    .btn-sym-yellow:hover {
+      background: #facc15;
+      color: #000;
+    }
+
+    .btn-toggle {
+      font-weight: 800;
+      padding: 2px 7px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #cbd5e1;
+    }
+    .btn-toggle.active {
+      background: #38bdf8;
+      color: #0f172a;
+      border-color: #38bdf8;
+    }
+
+    .slide-pill {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .slide-pill.active {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    select, input[type="number"], input[type="text"] {
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #475569;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 11.5px;
+      outline: none;
+    }
+
+    input[type="color"] {
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      cursor: pointer;
+      background: transparent;
+      vertical-align: middle;
+    }
+
+    .color-chip {
+      width: 17px;
+      height: 17px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.4);
+      display: inline-block;
+      transition: transform 0.1s ease;
+    }
+    .color-chip:hover {
+      transform: scale(1.2);
+    }
+
+    /* LaTeX Square Root & Fraction */
+    .latex-sqrt {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      padding: 0 2px;
+      font-weight: 600;
+    }
+    .sqrt-index {
+      font-size: 0.65em;
+      vertical-align: super;
+      margin-right: -2px;
+      margin-top: -6px;
+    }
+    .sqrt-symbol {
+      font-size: 1.15em;
+      font-family: serif;
+      line-height: 1;
+      padding-right: 1px;
+    }
+    .sqrt-radicand {
+      border-top: 2px solid currentColor;
+      padding: 1px 3px 0 2px;
+      line-height: 1.15;
+    }
+
+    .latex-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.88em;
+      line-height: 1.1;
+      font-weight: 600;
+    }
+    .latex-num {
+      border-bottom: 2px solid currentColor;
+      padding: 0 3px 2px 3px;
+      display: block;
+    }
+    .latex-den {
+      padding: 2px 3px 0 3px;
+      display: block;
+    }
+
+    /* Auto-Fitting Stage (Zero Scroll) */
+    .stage-container {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: #050811;
+      padding: 6px;
+    }
+
+    .scaler-wrapper {
+      position: absolute;
+      transform-origin: center center;
+      transition: transform 0.1s ease-out;
+    }
+
+    #slide-canvas {
+      width: 1920px !important;
+      height: 1080px !important;
+      background: #0b0f19;
+      padding: 40px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+      box-sizing: border-box !important;
+    }
+
+    .table-container {
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      box-sizing: border-box !important;
+    }
+
+    table {
+      width: 100% !important;
+      height: 100% !important;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid #38bdf8;
+      table-layout: fixed !important;
+    }
+
+    th {
+      background: #111827;
+      color: #38bdf8;
+      font-size: 32px;
+      font-weight: 700;
+      padding: 16px 24px;
+      text-align: left;
+      outline: none;
+      border-right: 2px solid #334155;
+      border-bottom: 3px solid #38bdf8;
+      word-break: break-word;
+      height: 14%;
+    }
+
+    th:last-child { border-right: none; }
+
+    td {
+      font-size: 28px;
+      color: #f8fafc;
+      padding: 16px 24px;
+      border-bottom: 2px solid #334155;
+      border-right: 2px solid #334155;
+      outline: none;
+      line-height: 1.45;
+      vertical-align: middle;
+      background: #0f172a;
+      word-break: break-word;
+    }
+
+    td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+
+    tbody tr td:first-child {
+      font-weight: 700;
+      background-color: #1e293b;
+      color: #fde047;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-card {
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 14px;
+      padding: 18px 22px;
+      max-width: 95vw;
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-box {
+      flex: 1;
+      background: #090d16;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      min-height: 380px;
+      max-height: 65vh;
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 60vh;
+      border-radius: 4px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .symbols-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 8px;
+      background: #0f172a;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Toolbar -->
+  <div class="top-toolbar">
+    
+    <!-- Row 1: Visibility, Slide Bar, Table Structure, Topics, AI Translate & Export -->
+    <div class="toolbar-row">
+      
+      <div class="toolbar-section" style="border-color:#0284c7;">
+        <span class="toolbar-label" style="color:#38bdf8;">🎯 Rows:</span>
+        <select id="chunkPreset" onchange="applyChunkPreset()">
+          <option value="chunk_3">3 Rows</option>
+          <option value="chunk_2">2 Rows</option>
+          <option value="chunk_4">4 Rows</option>
+          <option value="custom">Custom</option>
+          <option value="all">All</option>
+        </select>
+
+        <div id="customRangeGroup" style="display:none; align-items:center; gap:4px;">
+          <input type="number" id="rowFrom" value="1" min="1" style="width:38px;" onchange="applyCustomRange()">
+          <span style="font-size:11px;">to</span>
+          <input type="number" id="rowTo" value="3" min="1" style="width:38px;" onchange="applyCustomRange()">
+        </div>
+      </div>
+
+      <!-- Slide Switcher Bar -->
+      <div class="toolbar-section" style="border-color:#38bdf8; background:#0f172a;">
+        <span class="toolbar-label" style="color:#38bdf8;">🎬 Slide:</span>
+        <button class="btn" style="padding:1px 6px;" onclick="navigateSlide(-1)">◀</button>
+        <div id="slidePillsContainer" style="display:inline-flex; gap:3px; align-items:center;">
+          <!-- Slide pills -->
+        </div>
+        <button class="btn" style="padding:1px 6px;" onclick="navigateSlide(1)">▶</button>
+      </div>
+
+      <!-- Table Structure -->
+      <div class="toolbar-section">
+        <span class="toolbar-label">Table:</span>
+        <button class="btn btn-primary" onclick="addRow()">➕ Row</button>
+        <button class="btn btn-danger" onclick="removeRow()">➖ Row</button>
+        <button class="btn btn-primary" onclick="addColumn()">➕ Col</button>
+        <button class="btn btn-danger" onclick="removeColumn()">➖ Col</button>
+        <button class="btn" onclick="openBulkModal()">📋 Paste</button>
+      </div>
+
+      <!-- TOPIC MANAGER / SAVED TABLES LIBRARY -->
+      <div class="toolbar-section" style="border-color:#eab308; background:#0f172a;">
+        <span class="toolbar-label" style="color:#fde047;">📁 Topics:</span>
+        <button class="btn btn-gold" onclick="openTopicModal()" title="Save current topic or load previously saved topics">📁 Topics (<span id="topicCountDisplay">0</span>)</button>
+      </div>
+
+      <!-- Web AI Translation (No API Key Required) -->
+      <div class="toolbar-section" style="border-color:#7c3aed; background:#0f172a;">
+        <span class="toolbar-label" style="color:#c084fc;">🤖 AI:</span>
+        <button class="btn btn-purple" onclick="copyTablePromptForWeb()" title="One-Click Copy Table Prompt for Web Gemini">📋 AI Copy</button>
+        <button class="btn btn-orange" onclick="openWebAiPasteModal()" title="Paste Web Gemini Response to Auto-Fill Table">📥 AI Paste</button>
+      </div>
+
+      <!-- Export Actions -->
+      <div class="toolbar-section" style="margin-left:auto; border-color:#059669;">
+        <span class="toolbar-label" style="color:#34d399;">Export:</span>
+        <button class="btn btn-success" onclick="openPNGPreviewModal()">
+          🖼️ 4K PNG
+        </button>
+        <button class="btn btn-primary" onclick="batchDownloadAllPNGs()">
+          📦 All 4K PNGs
+        </button>
+        <button class="btn btn-pdf" onclick="openPDFPreviewModal()">
+          📑 A4 PDF
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Row 2: Typography, Formatting, Quick Colors & Bullet Points -->
+    <div class="toolbar-row">
+      
+      <!-- Formatting Scope & Size -->
+      <div class="toolbar-section">
+        <span class="toolbar-label">Target:</span>
+        <select id="targetScope">
+          <!-- Dynamically populated -->
+        </select>
+        
+        <label class="toolbar-label">Size:</label>
+        <input type="number" id="fontSizeInput" value="28" min="12" max="60" step="2" style="width:42px;" onchange="applyFontSize()">
+        <button class="btn" style="padding:1px 5px;" onclick="adjustFontSize(2)">A+</button>
+        <button class="btn" style="padding:1px 5px;" onclick="adjustFontSize(-2)">A-</button>
+
+        <button class="btn btn-toggle" id="btnBoldToggle" onmousedown="event.preventDefault(); toggleBold();" title="Bold (Selected text or target)"><b>B</b></button>
+        <button class="btn btn-toggle" id="btnItalicToggle" onmousedown="event.preventDefault(); toggleItalic();" title="Italic (Selected text or target)"><i>I</i></button>
+
+        <!-- Color Picker & 1-Click Quick Palette for Selected Words -->
+        <div style="display:inline-flex; align-items:center; gap:3px; background:#0f172a; padding:2px 5px; border-radius:4px; border:1px solid #475569;">
+          <input type="color" id="textColorPicker" value="#f8fafc" oninput="applyTextColorPicker(this.value)" title="Choose custom font color for selected text or scope">
+          <span class="color-chip" style="background:#fde047;" onmousedown="event.preventDefault(); applyDirectColor('#fde047');" title="Highlight Yellow"></span>
+          <span class="color-chip" style="background:#f87171;" onmousedown="event.preventDefault(); applyDirectColor('#f87171');" title="Highlight Red"></span>
+          <span class="color-chip" style="background:#4ade80;" onmousedown="event.preventDefault(); applyDirectColor('#4ade80');" title="Highlight Green"></span>
+          <span class="color-chip" style="background:#38bdf8;" onmousedown="event.preventDefault(); applyDirectColor('#38bdf8');" title="Highlight Sky Blue"></span>
+          <span class="color-chip" style="background:#ffffff;" onmousedown="event.preventDefault(); applyDirectColor('#ffffff');" title="Highlight White"></span>
+        </div>
+
+        <input type="color" id="bgColorPicker" value="#0f172a" oninput="applyBgColor()" title="Cell Background Color">
+
+        <select id="textAlignSelect" onchange="applyAlignment()">
+          <option value="left">Left</option>
+          <option value="center">Center</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+
+      <!-- Quick Scientific & Bullet Bar -->
+      <div class="toolbar-section" style="border-color:#38bdf8; background:#0f172a;">
+        <span class="toolbar-label" style="color:#38bdf8;">Quick:</span>
+        
+        <!-- BULLET POINT BUTTON -->
+        <button class="btn-sym" style="background:#0284c7; color:#ffffff; border-color:#38bdf8;" onmousedown="event.preventDefault(); insertBulletPoint();" title="Insert Bullet Point (•) in Cell">• Bullet</button>
+
+        <button class="btn-sym btn-sym-yellow" onclick="insertRateFormula()" title="Calculus Rate Fraction dN/dt">dN/dt</button>
+        <button class="btn-sym btn-sym-yellow" onclick="openFractionModal()" title="LaTeX Fraction: Numerator over Denominator">a/b (Frac)</button>
+        <button class="btn-sym btn-sym-yellow" onclick="openSqrtModal()" title="Square Root / Radical (√x)">√x (Root)</button>
+        
+        <button class="btn-sym" onclick="applySubscript()" title="Subscript (e.g. CO₂, H₂O)">X₂ (Sub)</button>
+        <button class="btn-sym" onclick="applySuperscript()" title="Superscript (e.g. Ca²⁺, ATP⁴⁻)">X² (Sup)</button>
+        <button class="btn-sym" onclick="insertSymbol(' → ')" title="Forward Reaction Arrow">→</button>
+        <button class="btn-sym" onclick="insertSymbol(' ⇌ ')" title="Reversible Equilibrium Reaction">⇌</button>
+        <button class="btn-sym" onclick="insertSymbol('⁺')" title="Superscript Plus (Cation)">⁺</button>
+        <button class="btn-sym" onclick="insertSymbol('⁻')" title="Superscript Minus (Anion)">⁻</button>
+        <button class="btn-sym" onclick="insertSymbol('Δ')" title="Delta (Heat / Change)">Δ</button>
+        <button class="btn-sym" onclick="insertSymbol('°')" title="Degree (e.g. 25°C)">°</button>
+        <button class="btn-sym" onclick="insertSymbol('μ')" title="Micro (e.g. μm, μmol)">μ</button>
+        <button class="btn-sym" onclick="insertSymbol('×')" title="Multiply">×</button>
+        <button class="btn-sym" onclick="insertSymbol('÷')" title="Divide">÷</button>
+        <button class="btn-sym" onclick="insertSymbol('±')" title="Plus-Minus">±</button>
+        <button class="btn-sym" style="color:#38bdf8; border-color:#38bdf8;" onclick="openSymbolsModal()">➕ More...</button>
+      </div>
+
+      <!-- Dimensions (1st Col Width, Row Spacing & Row Height) -->
+      <div class="toolbar-section" style="border-color:#eab308;">
+        <span class="toolbar-label" style="color:#fde047;">📐 Dimensions:</span>
+        <label class="toolbar-label">1st Col:</label>
+        <input type="number" id="firstColWidthInput" value="28" min="15" max="50" step="1" style="width:40px;" onchange="applyColWidthChange()">
+        <span style="font-size:11px;">%</span>
+
+        <select id="rowPaddingSelect" onchange="applyRowSpacing()" style="margin-left:4px;" title="Row Padding / Spacing">
+          <option value="compact">Compact (8px)</option>
+          <option value="normal" selected>Normal (16px)</option>
+          <option value="relaxed">Relaxed (24px)</option>
+        </select>
+
+        <label class="toolbar-label" style="margin-left:4px;">Row Height:</label>
+        <select id="rowHeightMode" onchange="applyRowHeightModeChange()" title="Row Height Mode: Auto-Fit (Default) or Fixed/Custom">
+          <option value="auto" selected>Auto-Fit (Default)</option>
+          <option value="fixed_compact">Compact (140px)</option>
+          <option value="fixed_normal">Medium (180px)</option>
+          <option value="fixed_relaxed">Tall (230px)</option>
+          <option value="custom">Custom px</option>
+        </select>
+        <input type="number" id="customRowHeightInput" value="180" min="60" max="450" step="10" style="width:44px; display:none;" onchange="applyCustomRowHeight()" title="Enter custom height in px">
+        <span id="customRowHeightUnit" style="font-size:11px; display:none;">px</span>
+      </div>
+
+      <!-- Grids -->
+      <div class="toolbar-section">
+        <span class="toolbar-label">Grid:</span>
+        <input type="number" id="gridWidthInput" value="2" min="0" max="8" style="width:36px;" onchange="applyGridlines()">
+        <input type="color" id="gridColorPicker" value="#334155" oninput="applyGridlines()">
+        <input type="color" id="outerBorderColorPicker" value="#38bdf8" oninput="applyOuterBorder()">
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Zero-Scroll Auto-Fitting Stage -->
+  <div class="stage-container" id="stage">
+    <div class="scaler-wrapper" id="scaler">
+      <div id="slide-canvas">
+        <div class="table-container">
+          <table id="compTable">
+            <colgroup id="colGroupElement">
+              <col style="width: 28%;">
+              <col style="width: 36%;">
+              <col style="width: 36%;">
+            </colgroup>
+            <thead>
+              <tr id="headerRow">
+                <th contenteditable="true">લક્ષણ / મુદ્દો (Feature)</th>
+                <th contenteditable="true">C3 વનસ્પતિઓ (C3 Plants)</th>
+                <th contenteditable="true">C4 વનસ્પતિઓ (C4 Plants)</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr>
+                <td contenteditable="true">પ્રાથમિક CO₂ ગ્રાહક (1° CO₂ Acceptor)</td>
+                <td contenteditable="true">RuBP (5-Carbon Ribulose bisphosphate)</td>
+                <td contenteditable="true">PEP (3-Carbon Phosphoenolpyruvate)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">પ્રથમ સ્થાયી નીપજ (1st Stable Product)</td>
+                <td contenteditable="true">3-PGA (3-Carbon acid)</td>
+                <td contenteditable="true">OAA (4-Carbon acid)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">પર્ણની આંતરિક રચના (Kranz Anatomy)</td>
+                <td contenteditable="true">ગેરહાજર (સામાન્ય પર્ણ રચના)</td>
+                <td contenteditable="true">હાજર (ક્રેન્ઝ અંતઃસ્થ રચના)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">પ્રકાશશ્વસન (Photorespiration)</td>
+                <td contenteditable="true">ઉચ્ચ દરે થાય છે (કાર્બન વ્યય વધુ)</td>
+                <td contenteditable="true">ગેરહાજર અથવા નહિવત (ઉચ્ચ કાર્યક્ષમતા)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">CO₂ સ્થાપન ક્ષમતા (CO₂ Fixation)</td>
+                <td contenteditable="true">ઓછી (મધ્યમ પ્રકાશ તીવ્રતા પર સંતૃપ્ત)</td>
+                <td contenteditable="true">ઉચ્ચ (પ્રકાશ સંતૃપ્તિ સરળતાથી થતી નથી)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">ઇષ્ટતમ તાપમાન (Optimum Temp)</td>
+                <td contenteditable="true">20°C થી 25°C</td>
+                <td contenteditable="true">30°C થી 45°C (ઉચ્ચ તાપમાન સહન કરે છે)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">RuBisCO નું સ્થાન (Location of RuBisCO)</td>
+                <td contenteditable="true">મધ્યપર્ણ કોષો (Mesophyll cells)</td>
+                <td contenteditable="true">પુલકંચુક કોષો (Bundle sheath cells)</td>
+              </tr>
+              <tr>
+                <td contenteditable="true">ઉદાહરણો (Examples)</td>
+                <td contenteditable="true">ઘઉં, ચોખા, જવ, રાઈ, સૂર્યમુખી</td>
+                <td contenteditable="true">મકાઈ, શેરડી, જુવાર, એમેરેન્થસ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOPIC MANAGER MODAL (SAVE / LOAD PRESETS) -->
+  <div id="topicModal" class="modal-overlay">
+    <div class="modal-card" style="width: 650px;">
+      <div class="modal-header">
+        <div class="modal-title">📁 Botany Topics & Comparisons Library</div>
+        <button class="btn btn-danger" onclick="closeModal('topicModal')">✕</button>
+      </div>
+
+      <div style="background:#1e293b; padding:10px 14px; border-radius:8px; border:1px solid #334155;">
+        <label style="font-size:12px; font-weight:700; color:#38bdf8; display:block; margin-bottom:5px;">
+          હાલના ટેબલને નવા ટોપિક તરીકે સેવ કરો:
+        </label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="newTopicNameInput" placeholder="ટોપિકનું નામ લખો (ઉદા. C3 vs C4 Plants, DNA vs RNA)..." style="flex:1; font-size:13px; padding:6px 10px;">
+          <button class="btn btn-success" onclick="saveCurrentTableAsTopic()">💾 Save Topic</button>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+        <span style="font-size:12.5px; font-weight:700; color:#fde047;">તમારા સેવ કરેલા ટોપિક્સ:</span>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-primary" style="padding:2px 7px; font-size:11px;" onclick="exportTopicsJSON()">📥 Export Backup</button>
+          <button class="btn btn-orange" style="padding:2px 7px; font-size:11px;" onclick="document.getElementById('importTopicFileInput').click()">📤 Import Backup</button>
+          <input type="file" id="importTopicFileInput" accept=".json" style="display:none;" onchange="importTopicsJSON(event)">
+        </div>
+      </div>
+
+      <div id="topicsListContainer" style="max-height:280px; overflow-y:auto; padding-right:4px;">
+        <!-- Topics dynamically rendered here -->
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; border-top:1px solid #1f2937; padding-top:8px;">
+        <button class="btn" onclick="closeModal('topicModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LATEX FRACTION INPUT MODAL -->
+  <div id="fractionModal" class="modal-overlay">
+    <div class="modal-card" style="width: 440px;">
+      <div class="modal-header">
+        <div class="modal-title">➗ LaTeX Fraction Builder (a/b)</div>
+        <button class="btn btn-danger" onclick="closeModal('fractionModal')">✕</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; padding:6px 0;">
+        <div>
+          <label style="font-size:13px; font-weight:700; color:#38bdf8; display:block; margin-bottom:5px;">
+            અંશ (Numerator - a):
+          </label>
+          <input type="text" id="fracNumeratorInput" value="a" style="width:100%; font-size:15px; padding:8px 10px;" placeholder="e.g. dN or CO₂ or 1">
+        </div>
+        <div style="text-align:center; font-size:18px; font-weight:bold; color:#94a3b8; margin:-4px 0;">
+          ─────────
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:700; color:#fde047; display:block; margin-bottom:5px;">
+            છેદ (Denominator - b):
+          </label>
+          <input type="text" id="fracDenominatorInput" value="b" style="width:100%; font-size:15px; padding:8px 10px;" placeholder="e.g. dt or 2">
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+        <button class="btn" onclick="closeModal('fractionModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmInsertFraction()">Insert Fraction ➗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LATEX RADICAL MODAL -->
+  <div id="sqrtModal" class="modal-overlay">
+    <div class="modal-card" style="width: 440px;">
+      <div class="modal-header">
+        <div class="modal-title">√x LaTeX Radical / Square Root Builder</div>
+        <button class="btn btn-danger" onclick="closeModal('sqrtModal')">✕</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; padding:6px 0;">
+        <div>
+          <label style="font-size:13px; font-weight:700; color:#38bdf8; display:block; margin-bottom:5px;">
+            મૂળ ની અંદરની વિગત (Radicand / Value - x):
+          </label>
+          <input type="text" id="sqrtValueInput" value="x" style="width:100%; font-size:15px; padding:8px 10px;" placeholder="e.g. x or 2 or dN/dt or CO₂">
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:600; color:#94a3b8; display:block; margin-bottom:5px;">
+            રૂટ ઇન્ડેક્સ (Index - ઓપ્શનલ):
+          </label>
+          <input type="text" id="sqrtIndexInput" value="" style="width:100%; font-size:14px; padding:6px 10px;" placeholder="Square root માટે ખાલી રાખો, ઘનમૂળ માટે 3">
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+        <button class="btn" onclick="closeModal('sqrtModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmInsertSqrt()">Insert Root √</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- More Science Symbols Modal -->
+  <div id="symbolsModal" class="modal-overlay">
+    <div class="modal-card" style="width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title">🧬 Biology & Chemistry Symbols Library</div>
+        <button class="btn btn-danger" onclick="closeModal('symbolsModal')">✕</button>
+      </div>
+      <p style="font-size:12px; color:#94a3b8;">
+        Click any symbol to insert it directly into your currently active cell:
+      </p>
+      <div class="symbols-grid">
+        <button class="btn-sym" onclick="insertSymbolAndClose('α')">α (Alpha)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('β')">β (Beta)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('γ')">γ (Gamma)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('λ')">λ (Lambda)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('Å')">Å (Angstrom)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('‰')">‰ (Permille)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('≈')">≈ (Approx)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('≠')">≠ (Not equal)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('≤')">≤</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('≥')">≥</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('♀')">♀ (Female)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('♂')">♂ (Male)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('↑')">↑ (Gas)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('↓')">↓ (Precipitate)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('⇌')">⇌</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('⇄')">⇄</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('→')">→</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('←')">←</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('⚡')">⚡ (Energy)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('•')">• (Dot)</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('CO₂')">CO₂</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('H₂O')">H₂O</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('O₂')">O₂</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('ATP')">ATP</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('NADPH')">NADPH</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('C₆H₁₂O₆')">C₆H₁₂O₆</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('PO₄³⁻')">PO₄³⁻</button>
+        <button class="btn-sym" onclick="insertSymbolAndClose('Ca²⁺')">Ca²⁺</button>
+      </div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn" onclick="closeModal('symbolsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PNG Preview Modal -->
+  <div id="pngPreviewModal" class="modal-overlay">
+    <div class="modal-card" style="width: 820px;">
+      <div class="modal-header">
+        <div class="modal-title">🖼️ Current Slide PNG Preview</div>
+        <button class="btn btn-danger" onclick="closeModal('pngPreviewModal')">✕</button>
+      </div>
+      <div class="preview-box">
+        <img id="pngPreviewImg" alt="PNG Preview">
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span id="pngPreviewLabel" style="font-size:12px; color:#94a3b8;">4K Ultra HD (3840 × 2160)</span>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" onclick="closeModal('pngPreviewModal')">Cancel</button>
+          <button class="btn btn-success" onclick="downloadPNGConfirmed()">📥 Download This Slide PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Preview Modal -->
+  <div id="pdfPreviewModal" class="modal-overlay">
+    <div class="modal-card" style="width: 920px;">
+      <div class="modal-header">
+        <div class="modal-title">📑 Single Page A4 Landscape PDF</div>
+        <button class="btn btn-danger" onclick="closeModal('pdfPreviewModal')">✕</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; background:#1e293b; padding:8px 14px; border-radius:8px;">
+        <span style="font-size:13px; font-weight:700; color:#38bdf8;">PDF Font Size (px):</span>
+        <button class="btn" onclick="adjustPDFFontSize(-1)">A-</button>
+        <span id="pdfFontSizeDisplay" class="badge" style="font-size:13px; background:#0284c7; padding:2px 8px; border-radius:4px;">19px</span>
+        <button class="btn" onclick="adjustPDFFontSize(1)">A+</button>
+      </div>
+      <div class="preview-box">
+        <img id="pdfPreviewImg" alt="PDF Preview">
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:#94a3b8;">All rows automatically fit on 1 Single Page</span>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" onclick="closeModal('pdfPreviewModal')">Cancel</button>
+          <button class="btn btn-pdf" onclick="downloadPDFConfirmed()">📥 Confirm & Download PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Web AI Paste Modal -->
+  <div id="webAiPasteModal" class="modal-overlay">
+    <div class="modal-card" style="width: 620px;">
+      <div class="modal-header">
+        <div class="modal-title">📥 Web AI Response Paste & Auto-Fill</div>
+        <button class="btn btn-danger" onclick="closeModal('webAiPasteModal')">✕</button>
+      </div>
+      <p style="font-size:12.5px; color:#94a3b8;">
+        <strong>gemini.google.com</strong> માંથી આવેલો પૂરો જવાબ અહીં નીચે પેસ્ટ કરો અને <strong>'Auto-Fill Gujarati Table'</strong> પર ક્લિક કરો:
+      </p>
+      <textarea id="webAiResponseInput" style="width:100%; height:190px; background:#0f172a; color:#fff; border:1px solid #374151; border-radius:8px; padding:10px; font-family:monospace; font-size:12.5px; outline:none;" placeholder='અહીં Gemini નો JSON જવાબ પેસ્ટ (Ctrl+V) કરો...'></textarea>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="btn" onclick="closeModal('webAiPasteModal')">Cancel</button>
+        <button class="btn btn-success" onclick="processWebAiPaste()">⚡ Auto-Fill Gujarati Table</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Paste Modal -->
+  <div id="bulkModal" class="modal-overlay">
+    <div class="modal-card" style="width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title">📋 Bulk Data Input (Excel / Google Sheets)</div>
+        <button class="btn btn-danger" onclick="closeModal('bulkModal')">✕</button>
+      </div>
+      <p style="font-size:12.5px; color:#94a3b8;">
+        Paste copied rows from Excel directly here (Tab separated):
+      </p>
+      <textarea id="bulkText" style="width:100%; height:180px; background:#0f172a; color:#fff; border:1px solid #374151; border-radius:8px; padding:10px; font-family:monospace; outline:none;" placeholder="લક્ષણ	C3 વનસ્પતિ	C4 વનસ્પતિ&#10;પ્રાથમિક CO2 ગ્રાહક	RuBP	PEP"></textarea>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="btn" onclick="closeModal('bulkModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="processBulkInput()">Import Table</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlideIndex = 0;
+    let rowsPerSlide = 3;
+    let cachedPNGDataURL = null;
+    let pdfCustomFontSize = 19;
+    let cachedPDFDataURL = null;
+    let cachedPDFCaptureHeight = 1357;
+    let lastActiveCell = null;
+    let lastSavedRange = null;
+    let lastSelectedTextRange = null;
+
+    // Selection tracker that captures text selections without losing range
+    document.addEventListener('selectionchange', () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode;
+        while (node && node !== document.body) {
+          if (node.tagName === 'TD' || node.tagName === 'TH') {
+            lastActiveCell = node;
+            lastSavedRange = sel.getRangeAt(0).cloneRange();
+            if (!sel.isCollapsed && sel.toString().trim().length > 0) {
+              lastSelectedTextRange = sel.getRangeAt(0).cloneRange();
+            }
+            break;
+          }
+          node = node.parentNode;
+        }
+      }
+    });
+
+    function restoreSelection() {
+      if (lastActiveCell) {
+        lastActiveCell.focus();
+        if (lastSavedRange) {
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(lastSavedRange);
+        }
+      }
+    }
+
+    // ==================== WORD HIGHLIGHT & COLOR ENGINE ====================
+    function applyDirectColor(color) {
+      const sel = window.getSelection();
+      let targetRange = null;
+
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed && sel.toString().trim().length > 0) {
+        targetRange = sel.getRangeAt(0);
+      } else if (lastSelectedTextRange && !lastSelectedTextRange.collapsed && lastSelectedTextRange.toString().trim().length > 0) {
+        targetRange = lastSelectedTextRange;
+      }
+
+      if (targetRange) {
+        restoreTargetRange(targetRange);
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand('foreColor', false, color);
+        lastSelectedTextRange = null;
+        saveTableToStorage();
+        return;
+      }
+
+      // If no word/text is selected, apply to target scope
+      getSelectedElements().forEach(el => el.style.color = color);
+      saveTableToStorage();
+    }
+
+    function applyTextColorPicker(color) {
+      applyDirectColor(color);
+    }
+
+    function restoreTargetRange(range) {
+      if (lastActiveCell) lastActiveCell.focus();
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function applyBgColor() {
+      const color = document.getElementById('bgColorPicker').value;
+      const sel = window.getSelection();
+      let targetRange = (sel && sel.rangeCount > 0 && !sel.isCollapsed) ? sel.getRangeAt(0) : lastSelectedTextRange;
+
+      if (targetRange && !targetRange.collapsed) {
+        restoreTargetRange(targetRange);
+        document.execCommand('styleWithCSS', false, true);
+        if (!document.execCommand('hiliteColor', false, color)) {
+          document.execCommand('backColor', false, color);
+        }
+        lastSelectedTextRange = null;
+        saveTableToStorage();
+        return;
+      }
+
+      getSelectedElements().forEach(el => el.style.backgroundColor = color);
+      saveTableToStorage();
+    }
+
+    function toggleBold() {
+      const sel = window.getSelection();
+      let targetRange = (sel && sel.rangeCount > 0 && !sel.isCollapsed) ? sel.getRangeAt(0) : lastSelectedTextRange;
+
+      if (targetRange && !targetRange.collapsed) {
+        restoreTargetRange(targetRange);
+        document.execCommand('bold', false, null);
+        lastSelectedTextRange = null;
+        saveTableToStorage();
+        return;
+      }
+
+      const elements = getSelectedElements();
+      if (elements.length === 0) return;
+      const isCurrentlyBold = elements[0].style.fontWeight === 'bold' || elements[0].style.fontWeight === '700' || elements[0].style.fontWeight === '800';
+      const targetWeight = isCurrentlyBold ? 'normal' : '700';
+      elements.forEach(el => el.style.fontWeight = targetWeight);
+      document.getElementById('btnBoldToggle').classList.toggle('active', !isCurrentlyBold);
+      saveTableToStorage();
+    }
+
+    function toggleItalic() {
+      const sel = window.getSelection();
+      let targetRange = (sel && sel.rangeCount > 0 && !sel.isCollapsed) ? sel.getRangeAt(0) : lastSelectedTextRange;
+
+      if (targetRange && !targetRange.collapsed) {
+        restoreTargetRange(targetRange);
+        document.execCommand('italic', false, null);
+        lastSelectedTextRange = null;
+        saveTableToStorage();
+        return;
+      }
+
+      const elements = getSelectedElements();
+      if (elements.length === 0) return;
+      const isCurrentlyItalic = elements[0].style.fontStyle === 'italic';
+      const targetStyle = isCurrentlyItalic ? 'normal' : 'italic';
+      elements.forEach(el => el.style.fontStyle = targetStyle);
+      document.getElementById('btnItalicToggle').classList.toggle('active', !isCurrentlyItalic);
+      saveTableToStorage();
+    }
+
+    // ==================== BULLET POINT ENGINE ====================
+    function insertBulletPoint() {
+      restoreSelection();
+      if (!lastActiveCell) {
+        const firstTd = document.querySelector('#tableBody td[contenteditable="true"]');
+        if (firstTd) {
+          firstTd.focus();
+          lastActiveCell = firstTd;
+        }
+      }
+      if (!lastActiveCell) return;
+
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed) {
+        const selectedText = sel.toString();
+        if (selectedText) {
+          const lines = selectedText.split('\n');
+          const bulleted = lines.map(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return line;
+            if (trimmed.startsWith('•')) return line;
+            return '• ' + line;
+          }).join('<br>');
+          document.execCommand('insertHTML', false, bulleted);
+          saveTableToStorage();
+          return;
+        }
+      }
+      document.execCommand('insertHTML', false, '•&nbsp;');
+      saveTableToStorage();
+    }
+
+    // Automatically handle Enter key inside cells for bullet points
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && lastActiveCell && (lastActiveCell.tagName === 'TD' || lastActiveCell.tagName === 'TH')) {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0) {
+          const node = sel.anchorNode;
+          const lineText = node ? (node.textContent || '') : '';
+          if (lineText.trim().startsWith('•')) {
+            e.preventDefault();
+            document.execCommand('insertHTML', false, '<br>•&nbsp;');
+            debounceSave();
+          }
+        }
+      }
+    });
+
+    // ==================== TOPIC MANAGER (SAVED TOPICS / PRESETS) ====================
+    let savedTopicsList = [];
+
+    function loadTopicsFromStorage() {
+      try {
+        const raw = localStorage.getItem('botany_comp_builder_topics_v1');
+        if (raw) {
+          savedTopicsList = JSON.parse(raw);
+          if (!Array.isArray(savedTopicsList)) savedTopicsList = [];
+        }
+      } catch (e) {
+        savedTopicsList = [];
+      }
+      updateTopicCountDisplay();
+    }
+
+    function saveTopicsToStorage() {
+      try {
+        localStorage.setItem('botany_comp_builder_topics_v1', JSON.stringify(savedTopicsList));
+      } catch (e) {
+        console.warn("Topic save error:", e);
+      }
+      updateTopicCountDisplay();
+    }
+
+    function updateTopicCountDisplay() {
+      const display = document.getElementById('topicCountDisplay');
+      if (display) display.innerText = savedTopicsList.length;
+    }
+
+    function openTopicModal() {
+      renderTopicListUI();
+      document.getElementById('topicModal').style.display = 'flex';
+      setTimeout(() => {
+        const input = document.getElementById('newTopicNameInput');
+        if (input) input.focus();
+      }, 100);
+    }
+
+    function saveCurrentTableAsTopic() {
+      const input = document.getElementById('newTopicNameInput');
+      const topicName = input ? input.value.trim() : '';
+      if (!topicName) {
+        alert("કૃપા કરીને ટોપિકનું નામ દાખલ કરો! (ઉદા. C3 vs C4 Plants)");
+        return;
+      }
+
+      const headers = Array.from(document.querySelectorAll('#headerRow th')).map(th => ({
+        html: th.innerHTML,
+        style: th.getAttribute('style') || ''
+      }));
+      const rows = Array.from(document.querySelectorAll('#tableBody tr')).map(tr => 
+        Array.from(tr.querySelectorAll('td')).map(td => ({
+          html: td.innerHTML,
+          style: td.getAttribute('style') || ''
+        }))
+      );
+
+      const topicObj = {
+        id: Date.now(),
+        name: topicName,
+        date: new Date().toLocaleDateString('gu-IN', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        headers: headers,
+        rows: rows,
+        settings: {
+          firstColWidth: document.getElementById('firstColWidthInput')?.value || '28',
+          chunkPreset: document.getElementById('chunkPreset')?.value || 'chunk_3',
+          rowPadding: document.getElementById('rowPaddingSelect')?.value || 'normal',
+          rowHeightMode: document.getElementById('rowHeightMode')?.value || 'auto',
+          customRowHeight: document.getElementById('customRowHeightInput')?.value || '180',
+          gridWidth: document.getElementById('gridWidthInput')?.value || '2',
+          gridColor: document.getElementById('gridColorPicker')?.value || '#334155',
+          outerBorderColor: document.getElementById('outerBorderColorPicker')?.value || '#38bdf8',
+          fontSize: document.getElementById('fontSizeInput')?.value || '28'
+        }
+      };
+
+      const existingIdx = savedTopicsList.findIndex(t => t.name.toLowerCase() === topicName.toLowerCase());
+      if (existingIdx !== -1) {
+        if (confirm(`'${topicName}' નામનો ટોપિક પહેલેથી છે. શું તેને નવા ડેટા સાથે અપડેટ કરવો છે?`)) {
+          savedTopicsList[existingIdx] = topicObj;
+        } else {
+          return;
+        }
+      } else {
+        savedTopicsList.unshift(topicObj);
+      }
+
+      saveTopicsToStorage();
+      renderTopicListUI();
+      if (input) input.value = '';
+      alert(`🎉 ટોપિક '${topicName}' સફળતાપૂર્વક સેવ થઈ ગયો છે!`);
+    }
+
+    function renderTopicListUI() {
+      const container = document.getElementById('topicsListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (savedTopicsList.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:24px; color:#94a3b8; font-size:13px;">
+            હજુ સુધી કોઈ ટોપિક સેવ કરેલ નથી.<br>
+            ઉપર નામ લખીને <strong>'💾 Save Topic'</strong> પર ક્લિક કરો!
+          </div>
+        `;
+        return;
+      }
+
+      savedTopicsList.forEach((topic, idx) => {
+        const rowCount = topic.rows ? topic.rows.length : 0;
+        const colCount = topic.headers ? topic.headers.length : 0;
+        
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:8px;';
+        card.innerHTML = `
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:700; font-size:13.5px; color:#38bdf8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${topic.name}
+            </div>
+            <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
+              📅 ${topic.date || ''} • 📊 ${colCount} Columns × ${rowCount} Rows
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; flex-shrink:0;">
+            <button class="btn btn-primary" onclick="loadTopicByIndex(${idx})" title="Load this topic into table">👁️ Load</button>
+            <button class="btn btn-danger" onclick="deleteTopicByIndex(${idx})" title="Delete this topic">🗑️</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function loadTopicByIndex(idx) {
+      const topic = savedTopicsList[idx];
+      if (!topic) return;
+
+      if (!confirm(`શું તમે '${topic.name}' ટોપિકને મેઈન ટેબલમાં લોડ કરવા માંગો છો?`)) return;
+
+      const headerRow = document.getElementById('headerRow');
+      const tableBody = document.getElementById('tableBody');
+      headerRow.innerHTML = '';
+      tableBody.innerHTML = '';
+
+      topic.headers.forEach(h => {
+        const th = document.createElement('th');
+        th.contentEditable = "true";
+        th.innerHTML = h.html !== undefined ? h.html : h;
+        if (h.style) th.setAttribute('style', h.style);
+        headerRow.appendChild(th);
+      });
+
+      topic.rows.forEach(r => {
+        const tr = document.createElement('tr');
+        r.forEach(cell => {
+          const td = document.createElement('td');
+          td.contentEditable = "true";
+          td.innerHTML = cell.html !== undefined ? cell.html : cell;
+          if (cell.style) td.setAttribute('style', cell.style);
+          tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+      });
+
+      if (topic.settings) {
+        const s = topic.settings;
+        if (s.firstColWidth && document.getElementById('firstColWidthInput')) {
+          document.getElementById('firstColWidthInput').value = s.firstColWidth;
+        }
+        if (s.chunkPreset && document.getElementById('chunkPreset')) {
+          document.getElementById('chunkPreset').value = s.chunkPreset;
+          if (s.chunkPreset === 'chunk_2') rowsPerSlide = 2;
+          else if (s.chunkPreset === 'chunk_3') rowsPerSlide = 3;
+          else if (s.chunkPreset === 'chunk_4') rowsPerSlide = 4;
+        }
+        if (s.rowPadding && document.getElementById('rowPaddingSelect')) {
+          document.getElementById('rowPaddingSelect').value = s.rowPadding;
+        }
+        if (s.gridWidth && document.getElementById('gridWidthInput')) {
+          document.getElementById('gridWidthInput').value = s.gridWidth;
+        }
+        if (s.gridColor && document.getElementById('gridColorPicker')) {
+          document.getElementById('gridColorPicker').value = s.gridColor;
+        }
+        if (s.outerBorderColor && document.getElementById('outerBorderColorPicker')) {
+          document.getElementById('outerBorderColorPicker').value = s.outerBorderColor;
+        }
+        if (s.fontSize && document.getElementById('fontSizeInput')) {
+          document.getElementById('fontSizeInput').value = s.fontSize;
+        }
+        if (s.rowHeightMode && document.getElementById('rowHeightMode')) {
+          document.getElementById('rowHeightMode').value = s.rowHeightMode;
+        }
+        if (s.customRowHeight && document.getElementById('customRowHeightInput')) {
+          document.getElementById('customRowHeightInput').value = s.customRowHeight;
+        }
+        const customInput = document.getElementById('customRowHeightInput');
+        const customUnit = document.getElementById('customRowHeightUnit');
+        const mode = s.rowHeightMode || 'auto';
+        if (customInput && customUnit) {
+          customInput.style.display = mode === 'custom' ? 'inline-block' : 'none';
+          customUnit.style.display = mode === 'custom' ? 'inline' : 'none';
+        }
+      }
+
+      currentSlideIndex = 0;
+      updateColgroup();
+      refreshScopeOptions();
+      applyRowSpacing();
+      applyGridlines();
+      applyOuterBorder();
+      const currentMode = document.getElementById('rowHeightMode')?.value || 'auto';
+      const cInp = document.getElementById('customRowHeightInput');
+      const cUnit = document.getElementById('customRowHeightUnit');
+      if (cInp && cUnit) {
+        cInp.style.display = currentMode === 'custom' ? 'inline-block' : 'none';
+        cUnit.style.display = currentMode === 'custom' ? 'inline' : 'none';
+      }
+      updateSlideVisibility();
+      autoFitCanvas();
+      saveTableToStorage();
+      closeModal('topicModal');
+      alert(`✅ '${topic.name}' સફળતાપૂર્વક લોડ થઈ ગયું છે!`);
+    }
+
+    function deleteTopicByIndex(idx) {
+      const topic = savedTopicsList[idx];
+      if (!topic) return;
+      if (confirm(`શું તમે ખરેખર '${topic.name}' ટોપિક ડિલીટ કરવા માંગો છો?`)) {
+        savedTopicsList.splice(idx, 1);
+        saveTopicsToStorage();
+        renderTopicListUI();
+      }
+    }
+
+    function exportTopicsJSON() {
+      if (savedTopicsList.length === 0) {
+        alert("સેવ કરેલા કોઈ ટોપિક્સ નથી!");
+        return;
+      }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedTopicsList, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Botany_Saved_Topics_Backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importTopicsJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported)) {
+            savedTopicsList = imported;
+            saveTopicsToStorage();
+            renderTopicListUI();
+            alert(`✅ ${imported.length} ટોપિક્સ સફળતાપૂર્વક ઈમ્પોર્ટ થઈ ગયા છે!`);
+          } else {
+            alert("અમાન્ય ફાઈલ ફોર્મેટ!");
+          }
+        } catch (err) {
+          alert("JSON ફાઈલ રીડ કરવામાં ભૂલ થઈ!");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ==================== LOCALSTORAGE PERSISTENCE ENGINE ====================
+    let saveTimeout = null;
+    function debounceSave() {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        saveTableToStorage();
+      }, 300);
+    }
+
+    function saveTableToStorage() {
+      try {
+        const headers = Array.from(document.querySelectorAll('#headerRow th')).map(th => ({
+          html: th.innerHTML,
+          style: th.getAttribute('style') || ''
+        }));
+        const rows = Array.from(document.querySelectorAll('#tableBody tr')).map(tr => 
+          Array.from(tr.querySelectorAll('td')).map(td => ({
+            html: td.innerHTML,
+            style: td.getAttribute('style') || ''
+          }))
+        );
+
+        const state = {
+          headers: headers,
+          rows: rows,
+          settings: {
+            firstColWidth: document.getElementById('firstColWidthInput')?.value || '28',
+            chunkPreset: document.getElementById('chunkPreset')?.value || 'chunk_3',
+            rowFrom: document.getElementById('rowFrom')?.value || '1',
+            rowTo: document.getElementById('rowTo')?.value || '3',
+            rowPadding: document.getElementById('rowPaddingSelect')?.value || 'normal',
+            rowHeightMode: document.getElementById('rowHeightMode')?.value || 'auto',
+            customRowHeight: document.getElementById('customRowHeightInput')?.value || '180',
+            gridWidth: document.getElementById('gridWidthInput')?.value || '2',
+            gridColor: document.getElementById('gridColorPicker')?.value || '#334155',
+            outerBorderColor: document.getElementById('outerBorderColorPicker')?.value || '#38bdf8',
+            fontSize: document.getElementById('fontSizeInput')?.value || '28'
+          }
+        };
+
+        localStorage.setItem('botany_comp_builder_saved_data_v1', JSON.stringify(state));
+      } catch (err) {
+        console.warn("Auto-save error:", err);
+      }
+    }
+
+    function loadTableFromStorage() {
+      try {
+        const raw = localStorage.getItem('botany_comp_builder_saved_data_v1');
+        if (!raw) return false;
+        const state = JSON.parse(raw);
+        if (!state || !state.headers || !state.rows || !state.headers.length || !state.rows.length) return false;
+
+        const headerRow = document.getElementById('headerRow');
+        const tableBody = document.getElementById('tableBody');
+        headerRow.innerHTML = '';
+        tableBody.innerHTML = '';
+
+        state.headers.forEach(h => {
+          const th = document.createElement('th');
+          th.contentEditable = "true";
+          th.innerHTML = h.html !== undefined ? h.html : h;
+          if (h.style) th.setAttribute('style', h.style);
+          headerRow.appendChild(th);
+        });
+
+        state.rows.forEach(r => {
+          const tr = document.createElement('tr');
+          r.forEach(cell => {
+            const td = document.createElement('td');
+            td.contentEditable = "true";
+            td.innerHTML = cell.html !== undefined ? cell.html : cell;
+            if (cell.style) td.setAttribute('style', cell.style);
+            tr.appendChild(td);
+          });
+          tableBody.appendChild(tr);
+        });
+
+        if (state.settings) {
+          const s = state.settings;
+          if (s.firstColWidth && document.getElementById('firstColWidthInput')) {
+            document.getElementById('firstColWidthInput').value = s.firstColWidth;
+          }
+          if (s.chunkPreset && document.getElementById('chunkPreset')) {
+            document.getElementById('chunkPreset').value = s.chunkPreset;
+            if (s.chunkPreset === 'chunk_2') rowsPerSlide = 2;
+            else if (s.chunkPreset === 'chunk_3') rowsPerSlide = 3;
+            else if (s.chunkPreset === 'chunk_4') rowsPerSlide = 4;
+          }
+          if (s.rowFrom && document.getElementById('rowFrom')) document.getElementById('rowFrom').value = s.rowFrom;
+          if (s.rowTo && document.getElementById('rowTo')) document.getElementById('rowTo').value = s.rowTo;
+          if (s.rowPadding && document.getElementById('rowPaddingSelect')) {
+            document.getElementById('rowPaddingSelect').value = s.rowPadding;
+          }
+          if (s.gridWidth && document.getElementById('gridWidthInput')) {
+            document.getElementById('gridWidthInput').value = s.gridWidth;
+          }
+          if (s.gridColor && document.getElementById('gridColorPicker')) {
+            document.getElementById('gridColorPicker').value = s.gridColor;
+          }
+          if (s.outerBorderColor && document.getElementById('outerBorderColorPicker')) {
+            document.getElementById('outerBorderColorPicker').value = s.outerBorderColor;
+          }
+          if (s.fontSize && document.getElementById('fontSizeInput')) {
+            document.getElementById('fontSizeInput').value = s.fontSize;
+          }
+          if (s.rowHeightMode && document.getElementById('rowHeightMode')) {
+            document.getElementById('rowHeightMode').value = s.rowHeightMode;
+          }
+          if (s.customRowHeight && document.getElementById('customRowHeightInput')) {
+            document.getElementById('customRowHeightInput').value = s.customRowHeight;
+          }
+          if (typeof applyRowHeightModeChange === 'function') {
+            const mode = s.rowHeightMode || 'auto';
+            const customInput = document.getElementById('customRowHeightInput');
+            const customUnit = document.getElementById('customRowHeightUnit');
+            if (customInput && customUnit) {
+              customInput.style.display = mode === 'custom' ? 'inline-block' : 'none';
+              customUnit.style.display = mode === 'custom' ? 'inline' : 'none';
+            }
+          }
+        }
+        return true;
+      } catch (err) {
+        console.warn("Auto-load error:", err);
+        return false;
+      }
+    }
+
+    // Helper to insert plain text or symbol
+    function insertSymbol(sym) {
+      restoreSelection();
+      if (!lastActiveCell) {
+        const firstVisibleTd = document.querySelector('#tableBody tr:not([style*="display: none"]) td:last-child');
+        if (firstVisibleTd) firstVisibleTd.focus();
+      }
+      document.execCommand('insertText', false, sym);
+      debounceSave();
+    }
+
+    function openSqrtModal() {
+      document.getElementById('sqrtModal').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('sqrtValueInput').focus();
+        document.getElementById('sqrtValueInput').select();
+      }, 100);
+    }
+
+    function confirmInsertSqrt() {
+      const val = document.getElementById('sqrtValueInput').value.trim() || 'x';
+      const idx = document.getElementById('sqrtIndexInput').value.trim();
+      let sqrtHtml = idx ? 
+        `&nbsp;<span class="latex-sqrt"><sup class="sqrt-index">${idx}</sup><span class="sqrt-symbol">√</span><span class="sqrt-radicand">${val}</span></span>&nbsp;` :
+        `&nbsp;<span class="latex-sqrt"><span class="sqrt-symbol">√</span><span class="sqrt-radicand">${val}</span></span>&nbsp;`;
+      closeModal('sqrtModal');
+      insertHTMLSnippet(sqrtHtml);
+    }
+
+    function insertHTMLSnippet(html) {
+      restoreSelection();
+      if (!lastActiveCell) {
+        const firstVisibleTd = document.querySelector('#tableBody tr:not([style*="display: none"]) td:last-child');
+        if (firstVisibleTd) firstVisibleTd.focus();
+      }
+      document.execCommand('insertHTML', false, html);
+      debounceSave();
+    }
+
+    function openFractionModal() {
+      document.getElementById('fractionModal').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('fracNumeratorInput').focus();
+        document.getElementById('fracNumeratorInput').select();
+      }, 100);
+    }
+
+    function confirmInsertFraction() {
+      const num = document.getElementById('fracNumeratorInput').value.trim() || 'a';
+      const den = document.getElementById('fracDenominatorInput').value.trim() || 'b';
+      const fracHtml = `&nbsp;<span class="latex-frac"><span class="latex-num">${num}</span><span class="latex-den">${den}</span></span>&nbsp;`;
+      closeModal('fractionModal');
+      insertHTMLSnippet(fracHtml);
+    }
+
+    function insertRateFormula() {
+      insertHTMLSnippet(`&nbsp;<span class="latex-frac"><span class="latex-num">dN</span><span class="latex-den">dt</span></span>&nbsp;`);
+    }
+
+    function applySubscript() {
+      restoreSelection();
+      document.execCommand('subscript', false, null);
+      debounceSave();
+    }
+
+    function applySuperscript() {
+      restoreSelection();
+      document.execCommand('superscript', false, null);
+      debounceSave();
+    }
+
+    function openSymbolsModal() {
+      document.getElementById('symbolsModal').style.display = 'flex';
+    }
+
+    function insertSymbolAndClose(sym) {
+      insertSymbol(sym);
+      closeModal('symbolsModal');
+    }
+
+    // Zero-Scroll Responsive Canvas Auto-Fitter
+    function autoFitCanvas() {
+      const stage = document.getElementById('stage');
+      const scaler = document.getElementById('scaler');
+      if (!stage || !scaler) return;
+
+      const availWidth = Math.max(100, stage.clientWidth - 16);
+      const availHeight = Math.max(100, stage.clientHeight - 16);
+
+      const scaleX = availWidth / 1920;
+      const scaleY = availHeight / 1080;
+      const finalScale = Math.min(scaleX, scaleY);
+
+      scaler.style.transform = `scale(${finalScale})`;
+    }
+
+    window.addEventListener('resize', autoFitCanvas);
+
+    function updateColgroup() {
+      const colgroup = document.getElementById('colGroupElement');
+      const headerThs = document.querySelectorAll('#headerRow th');
+      const colCount = headerThs.length;
+      if (colCount === 0) return;
+
+      colgroup.innerHTML = '';
+      const firstColWidth = Math.max(15, Math.min(50, parseInt(document.getElementById('firstColWidthInput').value) || 28));
+      const otherWidth = (100 - firstColWidth) / (colCount - 1);
+
+      for (let i = 0; i < colCount; i++) {
+        const col = document.createElement('col');
+        col.style.width = (i === 0 ? firstColWidth : otherWidth) + '%';
+        colgroup.appendChild(col);
+      }
+    }
+
+    function applyColWidthChange() {
+      updateColgroup();
+      debounceSave();
+    }
+
+    function applyRowSpacing() {
+      const spacing = document.getElementById('rowPaddingSelect').value;
+      const ths = document.querySelectorAll('#compTable th');
+      const tds = document.querySelectorAll('#compTable td');
+
+      let padValue = '16px 24px';
+      if (spacing === 'compact') padValue = '8px 16px';
+      else if (spacing === 'relaxed') padValue = '24px 28px';
+
+      tds.forEach(td => td.style.padding = padValue);
+      ths.forEach(th => th.style.padding = padValue);
+      adjustRowHeights();
+      debounceSave();
+    }
+
+    function getTotalRows() {
+      return document.querySelectorAll('#tableBody tr').length;
+    }
+
+    function getTotalSlides() {
+      const totalRows = getTotalRows();
+      if (rowsPerSlide <= 0 || totalRows === 0) return 1;
+      return Math.ceil(totalRows / rowsPerSlide);
+    }
+
+    function refreshSlidePills() {
+      const container = document.getElementById('slidePillsContainer');
+      const totalSlides = getTotalSlides();
+      container.innerHTML = '';
+
+      for (let i = 0; i < totalSlides; i++) {
+        const pill = document.createElement('button');
+        pill.className = `slide-pill ${i === currentSlideIndex ? 'active' : ''}`;
+        pill.innerText = `Slide ${i + 1}`;
+        pill.onclick = () => {
+          currentSlideIndex = i;
+          updateSlideVisibility();
+        };
+        container.appendChild(pill);
+      }
+    }
+
+    function updateSlideVisibility() {
+      const mode = document.getElementById('chunkPreset').value;
+      const rows = document.querySelectorAll('#tableBody tr');
+      const totalSlides = getTotalSlides();
+
+      if (mode === 'all') {
+        rows.forEach(r => r.style.display = '');
+        document.getElementById('customRangeGroup').style.display = 'none';
+        document.getElementById('slidePillsContainer').innerHTML = '<span style="font-size:11px; color:#94a3b8;">All Rows</span>';
+        adjustRowHeights();
+        return;
+      }
+
+      if (mode === 'custom') {
+        document.getElementById('customRangeGroup').style.display = 'inline-flex';
+        document.getElementById('slidePillsContainer').innerHTML = '<span style="font-size:11px; color:#94a3b8;">Custom</span>';
+        applyCustomRange();
+        return;
+      }
+
+      document.getElementById('customRangeGroup').style.display = 'none';
+
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+      if (currentSlideIndex < 0) currentSlideIndex = 0;
+
+      const start = currentSlideIndex * rowsPerSlide;
+      const end = start + rowsPerSlide;
+
+      rows.forEach((r, idx) => {
+        if (idx >= start && idx < end) r.style.display = '';
+        else r.style.display = 'none';
+      });
+
+      refreshSlidePills();
+      adjustRowHeights();
+    }
+
+    function adjustRowHeights() {
+      const mode = document.getElementById('rowHeightMode')?.value || 'auto';
+      const visibleRows = Array.from(document.querySelectorAll('#tableBody tr')).filter(r => r.style.display !== 'none');
+      if (visibleRows.length === 0) return;
+
+      if (mode === 'auto') {
+        const heightPercent = 86 / visibleRows.length;
+        visibleRows.forEach(r => r.style.height = heightPercent + '%');
+      } else if (mode === 'fixed_compact') {
+        visibleRows.forEach(r => r.style.height = '140px');
+      } else if (mode === 'fixed_normal') {
+        visibleRows.forEach(r => r.style.height = '180px');
+      } else if (mode === 'fixed_relaxed') {
+        visibleRows.forEach(r => r.style.height = '230px');
+      } else if (mode === 'custom') {
+        const customVal = parseInt(document.getElementById('customRowHeightInput')?.value) || 180;
+        visibleRows.forEach(r => r.style.height = customVal + 'px');
+      }
+    }
+
+    function applyRowHeightModeChange() {
+      const mode = document.getElementById('rowHeightMode').value;
+      const customInput = document.getElementById('customRowHeightInput');
+      const customUnit = document.getElementById('customRowHeightUnit');
+      if (mode === 'custom') {
+        if (customInput) customInput.style.display = 'inline-block';
+        if (customUnit) customUnit.style.display = 'inline';
+      } else {
+        if (customInput) customInput.style.display = 'none';
+        if (customUnit) customUnit.style.display = 'none';
+      }
+      adjustRowHeights();
+      debounceSave();
+    }
+
+    function applyCustomRowHeight() {
+      adjustRowHeights();
+      debounceSave();
+    }
+
+    function navigateSlide(direction) {
+      const totalSlides = getTotalSlides();
+      currentSlideIndex += direction;
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
+      if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
+      updateSlideVisibility();
+      debounceSave();
+    }
+
+    function applyChunkPreset() {
+      const mode = document.getElementById('chunkPreset').value;
+      if (mode === 'chunk_2') rowsPerSlide = 2;
+      else if (mode === 'chunk_3') rowsPerSlide = 3;
+      else if (mode === 'chunk_4') rowsPerSlide = 4;
+      currentSlideIndex = 0;
+      updateSlideVisibility();
+      debounceSave();
+    }
+
+    function applyCustomRange() {
+      const from = parseInt(document.getElementById('rowFrom').value) || 1;
+      const to = parseInt(document.getElementById('rowTo').value) || 1;
+      const rows = document.querySelectorAll('#tableBody tr');
+      rows.forEach((r, idx) => {
+        const rowNum = idx + 1;
+        if (rowNum >= from && rowNum <= to) r.style.display = '';
+        else r.style.display = 'none';
+      });
+      adjustRowHeights();
+    }
+
+    function closeModal(id) {
+      const modalEl = document.getElementById(id);
+      if (modalEl) modalEl.style.display = 'none';
+      if (id === 'pdfPreviewModal' || id === 'pngPreviewModal') {
+        updateSlideVisibility();
+        autoFitCanvas();
+      }
+    }
+
+    async function openPNGPreviewModal() {
+      const canvasEl = document.getElementById('slide-canvas');
+      const scaler = document.getElementById('scaler');
+      const prevTransform = scaler.style.transform;
+      scaler.style.transform = "none";
+
+      try {
+        const canvas = await html2canvas(canvasEl, {
+          width: 1920,
+          height: 1080,
+          windowWidth: 1920,
+          windowHeight: 1080,
+          scrollX: 0,
+          scrollY: 0,
+          scale: 2,
+          useCORS: true,
+          backgroundColor: canvasEl.style.backgroundColor || '#0b0f19'
+        });
+
+        scaler.style.transform = prevTransform;
+        cachedPNGDataURL = canvas.toDataURL('image/png', 1.0);
+        document.getElementById('pngPreviewImg').src = cachedPNGDataURL;
+        document.getElementById('pngPreviewLabel').innerText = `Slide ${currentSlideIndex + 1} of ${getTotalSlides()} • 3840 × 2160 (4K UHD) • 16:9`;
+        document.getElementById('pngPreviewModal').style.display = 'flex';
+      } catch (err) {
+        console.error(err);
+        scaler.style.transform = prevTransform;
+        alert("PNG Preview Generation Error");
+      }
+    }
+
+    async function downloadPNGConfirmed() {
+      if (!cachedPNGDataURL) return;
+      const fileName = `Slide_${currentSlideIndex + 1}_4K_3840x2160.png`;
+      const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+                             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      try {
+        const res = await fetch(cachedPNGDataURL);
+        const blob = await res.blob();
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        // iPhone / iOS Web Share Sheet
+        if (isMobileDevice && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: fileName
+          });
+          closeModal('pngPreviewModal');
+          return;
+        }
+
+        // Standard PC download
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      } catch (err) {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = cachedPNGDataURL;
+        link.click();
+      }
+      closeModal('pngPreviewModal');
+    }
+
+    async function batchDownloadAllPNGs() {
+      const totalSlides = getTotalSlides();
+      const savedIndex = currentSlideIndex;
+
+      for (let i = 0; i < totalSlides; i++) {
+        currentSlideIndex = i;
+        updateSlideVisibility();
+
+        const canvasEl = document.getElementById('slide-canvas');
+        const scaler = document.getElementById('scaler');
+        const prevTransform = scaler.style.transform;
+        scaler.style.transform = "none";
+
+        const canvas = await html2canvas(canvasEl, {
+          width: 1920,
+          height: 1080,
+          windowWidth: 1920,
+          windowHeight: 1080,
+          scrollX: 0,
+          scrollY: 0,
+          scale: 2,
+          useCORS: true,
+          backgroundColor: canvasEl.style.backgroundColor || '#0b0f19'
+        });
+
+        scaler.style.transform = prevTransform;
+        const link = document.createElement('a');
+        link.download = `Slide_Part_${i + 1}_of_${totalSlides}_4K_3840x2160.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        await new Promise(r => setTimeout(r, 600));
+      }
+
+      currentSlideIndex = savedIndex;
+      updateSlideVisibility();
+      alert(`✅ All ${totalSlides} slides downloaded successfully!`);
+    }
+
+    // ==================== OFF-SCREEN CLONE PDF ENGINE (ZERO MAIN SCREEN MUTATION) ====================
+    async function renderPDFPreview() {
+      const origTable = document.getElementById('compTable');
+      if (!origTable) return;
+
+      const offscreenContainer = document.createElement('div');
+      offscreenContainer.style.position = 'fixed';
+      offscreenContainer.style.left = '-9999px';
+      offscreenContainer.style.top = '0';
+      offscreenContainer.style.width = '1920px';
+      offscreenContainer.style.minHeight = '1357px';
+      offscreenContainer.style.background = '#ffffff';
+      offscreenContainer.style.padding = '40px';
+      offscreenContainer.style.boxSizing = 'border-box';
+      offscreenContainer.style.display = 'flex';
+      offscreenContainer.style.flexDirection = 'column';
+      offscreenContainer.style.zIndex = '-9999';
+
+      const tableClone = origTable.cloneNode(true);
+      tableClone.style.width = '100%';
+      tableClone.style.borderCollapse = 'separate';
+      tableClone.style.borderSpacing = '0';
+      tableClone.style.borderRadius = '12px';
+      tableClone.style.overflow = 'hidden';
+      tableClone.style.border = '2.5px solid #0f172a';
+      tableClone.style.tableLayout = 'fixed';
+
+      const cloneRows = tableClone.querySelectorAll('tbody tr');
+      cloneRows.forEach(r => {
+        r.style.display = 'table-row';
+        r.style.height = 'auto';
+      });
+
+      const cloneThs = tableClone.querySelectorAll('th');
+      cloneThs.forEach(th => {
+        th.style.backgroundColor = '#1e3a8a';
+        th.style.color = '#ffffff';
+        th.style.borderRight = '1.5px solid #cbd5e1';
+        th.style.borderBottom = '2.5px solid #0f172a';
+        th.style.fontSize = (pdfCustomFontSize + 4) + 'px';
+        th.style.padding = '12px 20px';
+      });
+      if (cloneThs.length > 0) cloneThs[cloneThs.length - 1].style.borderRight = 'none';
+
+      const cloneFirstCol = tableClone.querySelectorAll('tbody td:first-child');
+      cloneFirstCol.forEach(td => {
+        td.style.backgroundColor = '#f8fafc';
+        td.style.color = '#1e3a8a';
+        td.style.fontWeight = '700';
+        td.style.borderRight = '1.5px solid #cbd5e1';
+        td.style.borderBottom = '1.5px solid #cbd5e1';
+        td.style.fontSize = pdfCustomFontSize + 'px';
+        td.style.padding = '12px 20px';
+      });
+
+      const cloneDataCells = tableClone.querySelectorAll('tbody td:not(:first-child)');
+      cloneDataCells.forEach(td => {
+        td.style.backgroundColor = '#ffffff';
+        td.style.color = '#0f172a';
+        td.style.borderRight = '1.5px solid #cbd5e1';
+        td.style.borderBottom = '1.5px solid #cbd5e1';
+        td.style.fontSize = pdfCustomFontSize + 'px';
+        td.style.padding = '12px 20px';
+      });
+
+      if (cloneRows.length > 0) {
+        const lastRowCells = cloneRows[cloneRows.length - 1].querySelectorAll('td');
+        lastRowCells.forEach(td => td.style.borderBottom = 'none');
+      }
+
+      offscreenContainer.appendChild(tableClone);
+      document.body.appendChild(offscreenContainer);
+
+      try {
+        const captureHeight = Math.max(1357, offscreenContainer.scrollHeight);
+        offscreenContainer.style.height = captureHeight + 'px';
+
+        const canvas = await html2canvas(offscreenContainer, {
+          width: 1920,
+          height: captureHeight,
+          windowWidth: 1920,
+          windowHeight: captureHeight,
+          scrollX: 0,
+          scrollY: 0,
+          scale: 1.4,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+
+        cachedPDFDataURL = canvas.toDataURL('image/jpeg', 0.96);
+        const previewImg = document.getElementById('pdfPreviewImg');
+        if (previewImg) previewImg.src = cachedPDFDataURL;
+      } catch (err) {
+        console.error("PDF generation error:", err);
+      } finally {
+        if (document.body.contains(offscreenContainer)) {
+          document.body.removeChild(offscreenContainer);
+        }
+      }
+    }
+
+    function openPDFPreviewModal() {
+      document.getElementById('pdfFontSizeDisplay').innerText = pdfCustomFontSize + 'px';
+      document.getElementById('pdfPreviewModal').style.display = 'flex';
+      renderPDFPreview();
+    }
+
+    function adjustPDFFontSize(delta) {
+      pdfCustomFontSize = Math.max(14, Math.min(36, pdfCustomFontSize + delta));
+      document.getElementById('pdfFontSizeDisplay').innerText = pdfCustomFontSize + 'px';
+      renderPDFPreview();
+    }
+
+    function downloadPDFConfirmed() {
+      if (!cachedPDFDataURL) return;
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const margin = 4;
+      const printWidth = pdfWidth - (margin * 2);
+      const printHeight = pdfHeight - (margin * 2);
+
+      pdf.addImage(cachedPDFDataURL, 'JPEG', margin, margin, printWidth, printHeight);
+      pdf.save('Botany_Comparative_Notes_NarrowMargin_A4.pdf');
+      closeModal('pdfPreviewModal');
+    }
+
+    function applyGridlines() {
+      const width = document.getElementById('gridWidthInput').value + 'px';
+      const color = document.getElementById('gridColorPicker').value;
+      const tds = document.querySelectorAll('#compTable td');
+      tds.forEach(td => {
+        if (!td.matches(':last-child')) td.style.borderRight = `${width} solid ${color}`;
+        if (!td.parentElement.matches(':last-child')) td.style.borderBottom = `${width} solid ${color}`;
+      });
+      const ths = document.querySelectorAll('#compTable th');
+      ths.forEach(th => {
+        if (!th.matches(':last-child')) th.style.borderRight = `${width} solid ${color}`;
+      });
+      debounceSave();
+    }
+
+    function applyOuterBorder() {
+      const widthInp = document.getElementById('outerBorderWidthInput');
+      const width = (widthInp ? widthInp.value : '3') + 'px';
+      const colorInp = document.getElementById('outerBorderColorPicker');
+      const color = colorInp ? colorInp.value : '#38bdf8';
+      const table = document.getElementById('compTable');
+      if (table) table.style.border = `${width} solid ${color}`;
+      const ths = document.querySelectorAll('#compTable th');
+      ths.forEach(th => { th.style.borderBottom = `${width} solid ${color}`; });
+      debounceSave();
+    }
+
+    function refreshScopeOptions() {
+      const scopeSelect = document.getElementById('targetScope');
+      const currentValue = scopeSelect.value;
+      scopeSelect.innerHTML = '';
+
+      const standardGroup = document.createElement('optgroup');
+      standardGroup.label = "Main Groups";
+      standardGroup.innerHTML = `
+        <option value="all">Whole Table</option>
+        <option value="header_row">Top Header Only</option>
+        <option value="col_1">1st Column (Features)</option>
+        <option value="all_data">Data Cells</option>
+        <option value="all_cols_except_first">Columns (Without 1st)</option>
+      `;
+      scopeSelect.appendChild(standardGroup);
+
+      const colGroup = document.createElement('optgroup');
+      colGroup.label = "Column Wise";
+      const headers = document.querySelectorAll('#headerRow th');
+      headers.forEach((th, idx) => {
+        const colNum = idx + 1;
+        const colTitle = th.innerText.trim().replace(/\n/g, ' ').substring(0, 15) || `Col ${colNum}`;
+        const opt = document.createElement('option');
+        opt.value = `pure_col_${colNum}`;
+        opt.innerText = `Col ${colNum}: ${colTitle}`;
+        colGroup.appendChild(opt);
+      });
+      scopeSelect.appendChild(colGroup);
+
+      if (currentValue && scopeSelect.querySelector(`option[value="${currentValue}"]`)) {
+        scopeSelect.value = currentValue;
+      }
+    }
+
+    function getSelectedElements() {
+      const scope = document.getElementById('targetScope').value;
+      if (scope === 'all') return document.querySelectorAll('#compTable th, #compTable td');
+      if (scope === 'header_row') return document.querySelectorAll('#compTable th');
+      if (scope === 'col_1' || scope === 'pure_col_1') return document.querySelectorAll('#compTable tbody td:first-child');
+      if (scope === 'all_data' || scope === 'all_cols_except_first') {
+        const elements = [];
+        document.querySelectorAll('#tableBody tr').forEach(tr => {
+          for (let i = 1; i < tr.children.length; i++) elements.push(tr.children[i]);
+        });
+        return elements;
+      }
+      if (scope.startsWith('pure_col_')) {
+        const colIdx = parseInt(scope.split('_')[2]) - 1;
+        const elements = [];
+        document.querySelectorAll('#tableBody tr').forEach(tr => {
+          if (tr.children[colIdx]) elements.push(tr.children[colIdx]);
+        });
+        return elements;
+      }
+      return [];
+    }
+
+    function applyFontSize() {
+      const size = document.getElementById('fontSizeInput').value + 'px';
+      getSelectedElements().forEach(el => el.style.fontSize = size);
+      debounceSave();
+    }
+
+    function adjustFontSize(delta) {
+      const input = document.getElementById('fontSizeInput');
+      let current = parseInt(input.value) || 28;
+      current = Math.max(12, Math.min(60, current + delta));
+      input.value = current;
+      applyFontSize();
+    }
+
+    function applyAlignment() {
+      const align = document.getElementById('textAlignSelect').value;
+      getSelectedElements().forEach(el => el.style.textAlign = align);
+      debounceSave();
+    }
+
+    function addRow() {
+      const tbody = document.getElementById('tableBody');
+      const colCount = document.getElementById('headerRow').children.length;
+      const tr = document.createElement('tr');
+      for (let i = 0; i < colCount; i++) {
+        const td = document.createElement('td');
+        td.contentEditable = "true";
+        td.innerText = i === 0 ? "નવો મુદ્દો..." : "-";
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+      refreshScopeOptions();
+      applyGridlines();
+      updateSlideVisibility();
+      debounceSave();
+    }
+
+    function removeRow() {
+      const tbody = document.getElementById('tableBody');
+      if (tbody.children.length > 1) {
+        tbody.removeChild(tbody.lastElementChild);
+        refreshScopeOptions();
+        applyGridlines();
+        updateSlideVisibility();
+        debounceSave();
+      }
+    }
+
+    function addColumn() {
+      const headerRow = document.getElementById('headerRow');
+      const colCount = headerRow.children.length + 1;
+      const th = document.createElement('th');
+      th.contentEditable = "true";
+      th.innerText = `જૂથ ${colCount}`;
+      headerRow.appendChild(th);
+
+      document.querySelectorAll('#tableBody tr').forEach(row => {
+        const td = document.createElement('td');
+        td.contentEditable = "true";
+        td.innerText = "-";
+        row.appendChild(td);
+      });
+      updateColgroup();
+      refreshScopeOptions();
+      applyGridlines();
+      debounceSave();
+    }
+
+    function removeColumn() {
+      const headerRow = document.getElementById('headerRow');
+      if (headerRow.children.length > 2) {
+        headerRow.removeChild(headerRow.lastElementChild);
+        document.querySelectorAll('#tableBody tr').forEach(row => {
+          row.removeChild(row.lastElementChild);
+        });
+        updateColgroup();
+        refreshScopeOptions();
+        applyGridlines();
+        debounceSave();
+      }
+    }
+
+    // ==================== WEB AI TRANSLATION WORKFLOW (NO API KEY) ====================
+    function openWebAiPasteModal() {
+      document.getElementById('webAiPasteModal').style.display = 'flex';
+      setTimeout(() => {
+        const inp = document.getElementById('webAiResponseInput');
+        if (inp) inp.focus();
+      }, 100);
+    }
+
+    function getTableDataPayload() {
+      const headers = Array.from(document.querySelectorAll('#headerRow th')).map(th => th.innerText.trim());
+      const rows = [];
+      document.querySelectorAll('#tableBody tr').forEach(tr => {
+        const rowCells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+        rows.push(rowCells);
+      });
+      return { headers, rows };
+    }
+
+    function copyTablePromptForWeb() {
+      const payload = getTableDataPayload();
+      if (!payload.headers.length || !payload.rows.length) {
+        alert("કોષ્ટકમાં ડેટા ઉપલબ્ધ નથી!");
+        return;
+      }
+
+      const fullPrompt = `You are the chief scientific translator for GSEB / NCERT Biology (Standard 11 & 12) Gujarati Medium.
+Strict Rules:
+1. Translate scientific terms strictly using standard Gujarat State Board NCERT textbook glossary (e.g. parthenogenesis -> અસંયોગીજનન, honeybee -> મધમાખી, haplo-diploid / haplodiploid -> એકકીય-દ્વિકીય, meiosis -> અર્ધીકરણ, mitosis -> સમભાજન, sperm -> શુક્રકોષ, egg -> અંડકોષ, queen -> રાણી, worker -> કામદાર, male / drone -> નર (ડ્રોન), sex determination -> લિંગ નિશ્ચયન, offspring -> સંતતિ, synergids -> સહાયક કોષો, zygote -> યુગ્મનજ, primary endosperm nucleus -> પ્રાથમિક ભ્રૂણપોષ કોષકેન્દ્ર, antipodals -> પ્રતિધ્રુવી કોષો, perisperm -> બીજદેહશેષ, aestivation -> કલિકાંતરવિન્યાસ, tapetum -> પોષકસ્તર, codon -> સંકેત). Never use Hindi vocabulary.
+2. Keep scientific symbols, chemical formulas (like dN/dt, H2O, CO2, ATP, NADPH), numbers, units (°C, µm, Å), and standard abbreviations intact.
+3. Return ONLY a valid JSON object strictly mirroring the incoming structure: {"headers": [...], "rows": [[...], [...]]}. No markdown backticks or explanations.
+
+Input JSON:
+${JSON.stringify(payload, null, 2)}`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullPrompt).then(() => {
+          alert("✅ કોષ્ટક ડેટા પ્રોમ્પ્ટ કૉપી થઈ ગયો છે!\n\n1. gemini.google.com પર જઈને Paste (Ctrl+V) કરો.\n2. ત્યાંથી જવાબ કૉપી કરીને અહીં '📥 AI Paste' પર ક્લિક કરો.");
+        }).catch(() => {
+          prompt("નીચેનો પ્રોમ્પ્ટ કૉપી (Ctrl+C) કરી લો:", fullPrompt);
+        });
+      } else {
+        prompt("નીચેનો પ્રોમ્પ્ટ કૉપી (Ctrl+C) કરી લો:", fullPrompt);
+      }
+    }
+
+    function applyTableDataFromParsed(parsed) {
+      if (!parsed) return;
+      let headers = parsed.headers;
+      let rows = parsed.rows;
+
+      if (!headers && Array.isArray(parsed) && parsed.length > 0) {
+        headers = parsed[0];
+        rows = parsed.slice(1);
+      }
+
+      if (!headers || !rows || !Array.isArray(headers) || !Array.isArray(rows)) {
+        throw new Error("Invalid table data format");
+      }
+
+      const headerRow = document.getElementById('headerRow');
+      const tableBody = document.getElementById('tableBody');
+      headerRow.innerHTML = '';
+      tableBody.innerHTML = '';
+
+      headers.forEach(h => {
+        const th = document.createElement('th');
+        th.contentEditable = "true";
+        th.innerText = (h !== undefined && h !== null) ? String(h).trim() : '';
+        headerRow.appendChild(th);
+      });
+
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        headers.forEach((_, idx) => {
+          const td = document.createElement('td');
+          td.contentEditable = "true";
+          const cellVal = (r && r[idx] !== undefined && r[idx] !== null) ? String(r[idx]).trim() : '-';
+          td.innerText = cellVal;
+          tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+      });
+
+      updateColgroup();
+      refreshScopeOptions();
+      applyGridlines();
+      applyRowSpacing();
+      updateSlideVisibility();
+      debounceSave();
+    }
+
+    function processWebAiPaste() {
+      const rawText = document.getElementById('webAiResponseInput')?.value?.trim();
+      if (!rawText) {
+        alert("કૃપા કરીને પહેલાં Gemini નો જવાબ પેસ્ટ કરો!");
+        return;
+      }
+
+      try {
+        let jsonStr = rawText;
+        const jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch) {
+          jsonStr = jsonMatch[1].trim();
+        } else {
+          const firstBrace = rawText.indexOf('{');
+          const lastBrace = rawText.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            jsonStr = rawText.substring(firstBrace, lastBrace + 1);
+          }
+        }
+
+        const parsed = JSON.parse(jsonStr);
+        applyTableDataFromParsed(parsed);
+        closeModal('webAiPasteModal');
+        document.getElementById('webAiResponseInput').value = '';
+        alert("🎉 સફળતાપૂર્વક કોષ્ટક ગુજરાતીમાં અપડેટ થઈ ગયું છે!");
+      } catch (e) {
+        alert("JSON રીડ કરવામાં ભૂલ થઈ. કૃપા કરીને ખાતરી કરો કે તમે Gemini નો સાચો JSON જવાબ કૉપી કર્યો છે.");
+      }
+    }
+
+    function openBulkModal() { document.getElementById('bulkModal').style.display = 'flex'; }
+    function processBulkInput() {
+      const text = document.getElementById('bulkText').value.trim();
+      if (!text) return closeModal('bulkModal');
+
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) return alert("At least 1 header and 1 data row required.");
+
+      const delimiter = lines[0].includes('\t') ? '\t' : ',';
+      const headerRow = document.getElementById('headerRow');
+      const tableBody = document.getElementById('tableBody');
+      headerRow.innerHTML = '';
+      tableBody.innerHTML = '';
+
+      lines[0].split(delimiter).forEach(h => {
+        const th = document.createElement('th');
+        th.contentEditable = "true";
+        th.innerText = h.trim();
+        headerRow.appendChild(th);
+      });
+
+      for (let i = 1; i < lines.length; i++) {
+        const rowData = lines[i].split(delimiter);
+        const tr = document.createElement('tr');
+        Array.from(headerRow.children).forEach((_, idx) => {
+          const td = document.createElement('td');
+          td.contentEditable = "true";
+          td.innerText = rowData[idx] ? rowData[idx].trim() : '-';
+          tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+      }
+
+      updateColgroup();
+      closeModal('bulkModal');
+      refreshScopeOptions();
+      applyGridlines();
+      updateSlideVisibility();
+      debounceSave();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadTopicsFromStorage();
+      loadTableFromStorage();
+      
+      updateColgroup();
+      refreshScopeOptions();
+      applyRowSpacing();
+      applyGridlines();
+      applyOuterBorder();
+      const currentMode = document.getElementById('rowHeightMode')?.value || 'auto';
+      const cInp = document.getElementById('customRowHeightInput');
+      const cUnit = document.getElementById('customRowHeightUnit');
+      if (cInp && cUnit) {
+        cInp.style.display = currentMode === 'custom' ? 'inline-block' : 'none';
+        cUnit.style.display = currentMode === 'custom' ? 'inline' : 'none';
+      }
+      updateSlideVisibility();
+      autoFitCanvas();
+      
+      const stageEl = document.getElementById('stage');
+      if (window.ResizeObserver && stageEl) {
+        new ResizeObserver(() => autoFitCanvas()).observe(stageEl);
+      }
+
+      const compTable = document.getElementById('compTable');
+      if (compTable) {
+        compTable.addEventListener('input', debounceSave);
+        compTable.addEventListener('blur', () => saveTableToStorage(), true);
+      }
+
+      document.getElementById('headerRow').addEventListener('input', () => {
+        updateColgroup();
+        refreshScopeOptions();
+        debounceSave();
+      });
+    });
+  </script>
+</body>
+</html>
